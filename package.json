@@ -1,10 +1,10 @@
 {
   "name": "habit-diary-api",
-  "version": "0.0.1",
-  "description": "",
-  "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "version": "1.0.0",
+  "description": "The main API for the Bike Diary application",
+  "author": "Eric Afenyo",
+  "private": false,
+  "license": "MIT",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
