@@ -13,8 +13,6 @@ export const AuthUser = createParamDecorator(
     const request = {
       user: { uid: '6019fab9c7b7f1ddc2ed6152' },
     };
-    console.log(body);
-
     return param ? request.user[param] : request.user;
   },
 );
