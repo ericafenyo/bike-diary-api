@@ -6,6 +6,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
 import { TripModule } from './trip/trip.module';
 import { AuthModule } from './auth/auth.module';
+import { CredentialModule } from './credential/credential.module';
 require('dotenv').config();
 
 @Module({
@@ -17,6 +18,7 @@ require('dotenv').config();
     UserModule,
     TripModule,
     AuthModule,
+    CredentialModule,
   ],
   controllers: [AppController],
 })

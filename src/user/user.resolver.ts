@@ -1,26 +1,19 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
-import { UserService } from './user.service';
-
-import { Field, InputType } from '@nestjs/graphql';
 import { User } from './user.schema';
-
-@InputType()
-export class UserInput {
-  @Field()
-  uid: string;
-}
+import { UserService } from './user.service';
+import { UserType, AddUserInput } from './user.types';
 
 @Resolver()
 export class UserResolver {
   constructor(private userService: UserService) {}
 
-  @Query(() => User)
-  async getUser(@Args('id') id: string) {
-    return await this.userService.findById(id);
+  @Query(() => String)
+  async getUser(): Promise<string> {
+    return '';
   }
 
-  @Mutation(() => User)
-  async createUser(@Args('input') input: UserInput) {
-    return await this.userService.save(input);
+  @Mutation(() => UserType, { name: 'user' })
+  async addUser(@Args('user') user: AddUserInput): Promise<User> {
+    return await this.userService.addUser(user);
   }
 }
