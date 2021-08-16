@@ -1,35 +1,31 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Field, ObjectType } from '@nestjs/graphql';
 import { Document } from 'mongoose';
 
-export const AccountStatus = {
-  ACTIVE: 'ACTIVE',
-  SUSPENDED: 'SUSPENDED',
-  DEACTIVATED: 'DEACTIVATED',
-};
+export enum AccountStatus {
+  ACTIVE = 'active',
+  SUSPENDED = 'suspended',
+  DEACTIVATED = 'deactivated',
+}
 
-@ObjectType()
 @Schema()
 export class User extends Document {
   @Prop()
-  @Field()
-  uid: string;
+  name: string;
+
+  @Prop({ unique: true })
+  email: string;
 
   @Prop({
-    enum: [
-      AccountStatus.ACTIVE,
-      AccountStatus.DEACTIVATED,
-      AccountStatus.SUSPENDED,
-    ],
-
+    enum: [AccountStatus.ACTIVE, AccountStatus.DEACTIVATED, AccountStatus.SUSPENDED,],
     default: AccountStatus.ACTIVE,
   })
-  @Field()
   status: string;
 
   @Prop({ default: Date.now })
-  @Field()
   createdAt: Date;
+
+  @Prop({ default: Date.now })
+  updatedAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
