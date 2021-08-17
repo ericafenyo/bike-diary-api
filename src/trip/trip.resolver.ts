@@ -2,7 +2,7 @@ import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { TripService } from './trip.service';
 
 import { Field, InputType } from '@nestjs/graphql';
-import { AuthUser } from '../auth/user.decorator';
+import { CurrentUser } from '../auth/auth.decorator';
 import { Trip } from './trip.schema';
 
 @InputType()
@@ -16,13 +16,13 @@ export class TripResolver {
   constructor(private tripService: TripService) {}
 
   @Query(() => [Trip])
-  async trips(@AuthUser('uid') uid: string): Promise<Trip[]> {
+  async trips(@CurrentUser('uid') uid: string): Promise<Trip[]> {
     return await this.tripService.find(uid);
   }
 
   @Mutation(() => [Trip])
   async addTrips(
-    @AuthUser('uid') uid: string,
+    @CurrentUser('uid') uid: string,
     @Args('input') input: TripInput,
   ): Promise<Trip[]> {
     return await this.tripService.save(uid, input);

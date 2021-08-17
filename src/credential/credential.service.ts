@@ -27,4 +27,15 @@ export class CredentialService {
   private async isValid(candidate: string, hashed: string): Promise<boolean> {
     return await bcrypt.compare(candidate, hashed);
   }
+
+  async validate(userId: string, candidate: string): Promise<boolean> {
+    const credentials = await this.model.findOne({ userId });
+
+    if (!credentials) {
+      return false;
+    }
+
+    console.log('Body', credentials, userId);
+    return await this.isValid(candidate, credentials.password);
+  }
 }
