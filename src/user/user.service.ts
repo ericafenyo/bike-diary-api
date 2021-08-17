@@ -59,4 +59,10 @@ export class UserService {
     await this.credentialService.save(savedUser._id, userInput.password);
     return savedUser;
   }
+
+  async validate(email: string, password: string): Promise<User | null> {
+    const user = await this.findByEmail(email);
+    const isValid = await this.credentialService.validate(user._id, password);
+    return isValid ? user : null;
+  }
 }
