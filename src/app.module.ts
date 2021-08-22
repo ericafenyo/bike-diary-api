@@ -14,6 +14,7 @@ require('dotenv').config();
     MongooseModule.forRoot(process.env.MONGO_URL),
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      introspection: true,
     }),
     UserModule,
     TripModule,
