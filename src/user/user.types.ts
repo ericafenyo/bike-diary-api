@@ -6,7 +6,10 @@ export class UserType {
   _id: string;
 
   @Field()
-  name: string;
+  firstName: string;
+
+  @Field()
+  lastName: string;
 
   @Field()
   email: string;
@@ -18,7 +21,10 @@ export class UserType {
 @InputType()
 export class AddUserInput {
   @Field()
-  name: string;
+  firstName: string;
+
+  @Field()
+  lastName: string;
 
   @Field()
   email: string;
