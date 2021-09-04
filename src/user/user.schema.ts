@@ -10,13 +10,16 @@ export enum AccountStatus {
 @Schema()
 export class User extends Document {
   @Prop()
-  name: string;
+  firstName: string;
+
+  @Prop()
+  lastName: string;
 
   @Prop({ unique: true })
   email: string;
 
   @Prop({
-    enum: [AccountStatus.ACTIVE, AccountStatus.DEACTIVATED, AccountStatus.SUSPENDED,],
+    enum: [AccountStatus.ACTIVE, AccountStatus.DEACTIVATED, AccountStatus.SUSPENDED],
     default: AccountStatus.ACTIVE,
   })
   status: string;
