@@ -1,4 +1,18 @@
-import { InputType, ObjectType, Field, ID } from '@nestjs/graphql';
+import {
+  InputType,
+  ObjectType,
+  Field,
+  ID,
+  registerEnumType,
+} from '@nestjs/graphql';
+
+enum Gender {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+  UNSPECIFIED = 'UNSPECIFIED',
+}
+
+registerEnumType(Gender, { name: 'Gender' });
 
 @ObjectType()
 export class UserType {
@@ -6,29 +20,32 @@ export class UserType {
   _id: string;
 
   @Field()
-  firstName: string;
-
-  @Field()
-  lastName: string;
+  uuid: string;
 
   @Field()
   email: string;
 
   @Field()
+  username: string;
+
+  @Field()
   createdAt: Date;
+
+  @Field()
+  updatedAt: Date;
 }
 
 @InputType()
-export class AddUserInput {
+export class CreateUserInput {
   @Field()
-  firstName: string;
-
-  @Field()
-  lastName: string;
+  username: string;
 
   @Field()
   email: string;
 
   @Field()
   password: string;
+
+  @Field(() => Gender)
+  gender: Gender;
 }

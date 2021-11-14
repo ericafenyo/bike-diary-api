@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { AuthenticatedUser } from './auth.decorator';
+import speakeasy = require('speakeasy');
 
 export interface JWTokens {
   accessToken: string;
@@ -46,5 +47,25 @@ export class AuthService {
       accessToken: this.jwtService.sign(payload, jwtOptions),
       refreshToken: '',
     };
+  }
+
+  async generateOneTimeUseCode(email: string) {
+    const secret = process.env.OTP_SECRETE;
+    // const secret = speakeasy.generateSecret();
+
+    const token = speakeasy.totp({
+      secret: secret,
+      encoding: 'base32',
+    });
+
+    const isValid = speakeasy.totp.verify({
+      secret: secret,
+      encoding: 'base32',
+      token: 98765,
+    });
+
+    console.log(isValid);
+
+    // const currentUser = await this.userService.findByEmail(email, false);
   }
 }
