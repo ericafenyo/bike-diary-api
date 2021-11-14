@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Resolver, Field, ObjectType, Mutation, Args } from '@nestjs/graphql';
+import { OptType, OptArgs } from 'src/otp/otp.types';
 import { CurrentUser, AuthenticatedUser } from './auth.decorator';
 import { LocalAuthGuard } from './auth.guard';
 import { AuthService, JWTokens } from './auth.service';
@@ -32,5 +33,12 @@ export class AuthResolver {
   ): Promise<JWTokens> {
     console.log(email, password);
     return await this.authService.getToken(user);
+  }
+
+  @Mutation(() => OptType)
+  async sendVerificationCode(@Args() args: OptArgs): Promise<OptType> {
+    await this.authService.generateOneTimeUseCode(args.email);
+
+    return args;
   }
 }

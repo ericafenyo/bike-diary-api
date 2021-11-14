@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import fs from 'fs';
+import fs = require('fs');
 import mustache = require('mustache');
 import mjml = require('mjml');
+import nodemailer = require('nodemailer');
 
 /**
  *
@@ -17,37 +18,66 @@ interface MailOptions {
 
 const subjects = {
   accountVerificationCode: {
-    en: '',
-    fr: '',
+    en: 'Your account verification code',
+    fr: 'Le code de vérification de votre compte',
   },
 };
 
 @Injectable()
 export class MailService {
   async sendMail(options: MailOptions) {
-    const { template, context, locale } = options;
+    const { template, context, locale, from, to, subject } = options;
     const mail = await this.getMail(template, context, locale);
 
     // Send the email
-    
+    const transport = nodemailer.createTransport({
+      host: process.env.MAILER_HOST,
+      port: process.env.MAILER_PORT,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: process.env.MAILER_USERNAME,
+        pass: process.env.MAILER_PASSWORD,
+      },
+    });
+
+    const sentMessage = await transport.sendMail({
+      from: from,
+      to: to,
+      subject: subject,
+      html: mail,
+    });
+
+    console.log(sentMessage);
   }
 
-  async getMail(template: string, context: object, locale: string) {
-    const templateContent = this.readTemplateContent(template, locale);
+  private async getMail(template: string, context: object, locale: string) {
+    const templateContent = await this.readTemplateContent(template, locale);
     const boundTemplate = mustache.render(templateContent, context);
 
-    return mjml(boundTemplate).html;
+    const html = mjml(boundTemplate).html;
+    return html;
   }
 
-  private readTemplateContent(templateName: string, locale: string) {
-    return fs.promises.readdir(__dirname + '/templates').then(res => {
-      return fs.promises.readFile(
-        __dirname + `/templates/${templateName}-${locale}.mjml`,
-        { encoding: 'utf-8' },
-      );
-    });
+  private async readTemplateContent(templateName: string, locale: string) {
+    return fs.promises
+      .readdir(__dirname + '/templates')
+      .then(() => {
+        return fs.promises.readFile(
+          __dirname + `/templates/${templateName}-${locale}.mjml`,
+          { encoding: 'utf-8' },
+        );
+      })
+      .catch(error => {
+        console.log('An error occurred while reading mail templates', error);
+      });
   }
 
+  /**
+   * Email a one-time-use account verification code
+   * @param email the recipients email addresses
+   * @param context an object containing
+   * @param locale (Optional) a language property. Valid values: `en` and `fr`
+   */
   async sendAccountVerificationCode(
     email: string,
     context: any,
@@ -55,7 +85,7 @@ export class MailService {
   ) {
     const options: MailOptions = {
       subject: subjects.accountVerificationCode[locale],
-      template: 'send-account_verification-code',
+      template: 'send-account-verification-code',
       locale: locale,
       context: context,
       from: `"Bike Diary" <noreply@example.com>`,
