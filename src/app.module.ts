@@ -8,6 +8,7 @@ import { TripModule } from './trip/trip.module';
 import { AuthModule } from './auth/auth.module';
 import { CredentialModule } from './credential/credential.module';
 import { MailModule } from './mail/mail.module';
+import { OtpModule } from './otp/otp.module';
 require('dotenv').config();
 
 @Module({
@@ -22,6 +23,7 @@ require('dotenv').config();
     AuthModule,
     CredentialModule,
     MailModule,
+    OtpModule,
   ],
   controllers: [AppController],
 })
