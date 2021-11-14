@@ -7,6 +7,7 @@ import { join } from 'path';
 import { TripModule } from './trip/trip.module';
 import { AuthModule } from './auth/auth.module';
 import { CredentialModule } from './credential/credential.module';
+import { MailModule } from './mail/mail.module';
 require('dotenv').config();
 
 @Module({
@@ -20,6 +21,7 @@ require('dotenv').config();
     TripModule,
     AuthModule,
     CredentialModule,
+    MailModule,
   ],
   controllers: [AppController],
 })
