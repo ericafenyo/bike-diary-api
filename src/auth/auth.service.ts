@@ -3,6 +3,10 @@ import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
 import { AuthenticatedUser } from './auth.decorator';
 import speakeasy = require('speakeasy');
+import { randomBytes } from 'crypto';
+import { RefreshToken } from './refresh-token.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, Types } from 'mongoose';
 
 export interface JWTokens {
   accessToken: string;
@@ -12,6 +16,7 @@ export interface JWTokens {
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectModel(RefreshToken.name) private model: Model<RefreshToken>,
     private userService: UserService,
     private jwtService: JwtService,
   ) {}
@@ -32,32 +37,48 @@ export class AuthService {
    * @returns a {@link JWTokens} object.
    */
   async getToken(user: AuthenticatedUser): Promise<JWTokens> {
-    const jwtOptions: JwtSignOptions = {
+    return {
+      accessToken: await this.generateAccessToken(user),
+      refreshToken: await this.generateRefreshToken(user),
+    };
+  }
+
+  async generateAccessToken(user: AuthenticatedUser): Promise<string> {
+    const payload = { email: user.email };
+    const options: JwtSignOptions = {
       audience: process.env.JWT_AUDIENCE,
       expiresIn: 86400,
       subject: `auth|${user.id}`,
       secret: process.env.JWT_SECRET,
     };
+    return this.jwtService.sign(payload, options);
+  }
 
-    const payload = { email: user.email };
+  async generateRefreshToken(user: AuthenticatedUser): Promise<string> {
+    const token = randomBytes(64).toString('base64url');
 
-    const crypto = await import('crypto');
-    const signature = crypto.randomBytes(32).toString('hex');
+    const refreshToken = new this.model({
+      value: token,
+      userId: Types.ObjectId(user.id),
+    });
 
-    const refreshTokenOptions = {
-      subject: `auth|${user.id}`,
-      signature: signature,
-    };
+    const previousToken = await this.model.findOne({
+      userId: Types.ObjectId(user.id),
+      revokedAt: null,
+    });
 
-    return {
-      accessToken: this.jwtService.sign(payload, jwtOptions),
-      refreshToken: signature,
-    };
+    if (previousToken) {
+      refreshToken.previousTokenId = previousToken._id;
+      previousToken.revokedAt = new Date();
+      await previousToken.save();
+    }
+
+    await refreshToken.save();
+    return refreshToken.value;
   }
 
   async generateOneTimeUseCode(email: string) {
     const secret = process.env.OTP_SECRETE;
-    // const secret = speakeasy.generateSecret();
 
     const token = speakeasy.totp({
       secret: secret,
