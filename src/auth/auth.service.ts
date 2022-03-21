@@ -39,13 +39,19 @@ export class AuthService {
       secret: process.env.JWT_SECRET,
     };
 
-    console.log(jwtOptions);
-
     const payload = { email: user.email };
+
+    const crypto = await import('crypto');
+    const signature = crypto.randomBytes(32).toString('hex');
+
+    const refreshTokenOptions = {
+      subject: `auth|${user.id}`,
+      signature: signature,
+    };
 
     return {
       accessToken: this.jwtService.sign(payload, jwtOptions),
-      refreshToken: '',
+      refreshToken: signature,
     };
   }
 
