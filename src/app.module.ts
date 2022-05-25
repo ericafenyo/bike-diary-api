@@ -4,7 +4,7 @@ import { AppController } from './app.controller';
 import { UserModule } from './user/user.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
-import { TripModule } from './trip/trip.module';
+import { AdventureModule } from './adventure/adventure.module';
 import { AuthModule } from './auth/auth.module';
 import { CredentialModule } from './credential/credential.module';
 import { MailModule } from './mail/mail.module';
@@ -22,7 +22,7 @@ require('dotenv').config();
       playground: true,
     }),
     UserModule,
-    TripModule,
+    AdventureModule,
     AuthModule,
     CredentialModule,
     MailModule,
