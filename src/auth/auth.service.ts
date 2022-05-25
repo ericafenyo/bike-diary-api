@@ -59,11 +59,11 @@ export class AuthService {
 
     const refreshToken = new this.model({
       value: token,
-      userId: Types.ObjectId(user.id),
+      userId: new Types.ObjectId(user.id),
     });
 
     const previousToken = await this.model.findOne({
-      userId: Types.ObjectId(user.id),
+      userId: new Types.ObjectId(user.id),
       revokedAt: null,
     });
 
