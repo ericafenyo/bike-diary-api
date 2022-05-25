@@ -4,7 +4,7 @@ import { Document, Types } from 'mongoose';
 
 @ObjectType()
 @Schema()
-export class Trip extends Document {
+export class Adventure extends Document {
   @Prop()
   @Field()
   document: string;
@@ -17,4 +17,4 @@ export class Trip extends Document {
   user: Types.ObjectId;
 }
 
-export const TripSchema = SchemaFactory.createForClass(Trip);
+export const AdventureSchema = SchemaFactory.createForClass(Adventure);
