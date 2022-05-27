@@ -7,6 +7,7 @@ import { AuthResolver } from './auth.resolver';
 import { LocalStrategy } from './local.strategy';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RefreshToken, RefreshTokenSchema } from './refresh-token.schema';
+import { JwtStrategy } from './jwt.strategy';
 
 const secret = process.env.JWT_SECRET;
 @Module({
@@ -20,7 +21,7 @@ const secret = process.env.JWT_SECRET;
     ]),
     UserModule,
   ],
-  providers: [AuthService, AuthResolver, LocalStrategy],
+  providers: [AuthService, AuthResolver, LocalStrategy, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

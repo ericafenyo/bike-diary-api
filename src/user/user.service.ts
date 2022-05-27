@@ -25,12 +25,15 @@ export class UserService {
     private readonly mailService: MailService,
   ) {}
 
-  async findById(uid: string): Promise<User> {
-    const user = await this.userModel.findOne({ uid });
-    console.log(user);
-    if (!user) {
-      throw new NotFoundException(errors.user.accountNotFound);
+  async findById(id: string, validate: boolean = true): Promise<User> {
+    const user = await this.userModel.findOne({ id });
+
+    if (validate) {
+      if (!user) {
+        throw new NotFoundException(errors.user.accountNotFound);
+      }
     }
+
     return user;
   }
 

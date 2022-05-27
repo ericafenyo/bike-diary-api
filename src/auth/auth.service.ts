@@ -29,6 +29,13 @@ export class AuthService {
     return user ? { id: user.id, email: user.email } : null;
   }
 
+  async validateUserWithEmail(
+    email: string,
+  ): Promise<AuthenticatedUser | null> {
+    const user = await this.userService.findByEmail(email, false)
+    return user ? { id: user.id, email: user.email } : null;
+  }
+
   /**
    * Generates Json Web Tokens.
    *
