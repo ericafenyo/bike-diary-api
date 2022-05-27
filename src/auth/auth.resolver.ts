@@ -31,7 +31,6 @@ export class AuthResolver {
     @Args('password') password: string,
     @CurrentUser() user: AuthenticatedUser,
   ): Promise<JWTokens> {
-    console.log(email, password);
     return await this.authService.getToken(user);
   }
 

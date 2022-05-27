@@ -27,3 +27,11 @@ export class LocalAuthGuard extends AuthGuard('local') {
     return super.canActivate(new ExecutionContextHost([request]));
   }
 }
+
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {
+  getRequest(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
+  }
+}

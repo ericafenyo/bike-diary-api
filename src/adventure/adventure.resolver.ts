@@ -1,30 +1,25 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { AdventureService } from './adventure.service';
-
-import { Field, InputType } from '@nestjs/graphql';
-import { CurrentUser } from '../auth/auth.decorator';
-import { Adventure } from './adventure.schema';
-
-@InputType()
-export class AdventureInput {
-  @Field(() => [String])
-  documents: string[];
-}
+import { AuthenticatedUser, CurrentUser } from '../auth/auth.decorator';
+import { Adventure, AdventureInput } from './adventure.types';
+import { UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/auth.guard';
 
 @Resolver()
 export class AdventureResolver {
-  constructor(private tripService: AdventureService) {}
+  constructor(private adventureService: AdventureService) {}
 
   @Query(() => [Adventure])
-  async trips(@CurrentUser('uid') uid: string): Promise<Adventure[]> {
-    return await this.tripService.find(uid);
+  async trips(): Promise<Adventure[]> {
+    return [];
   }
 
-  @Mutation(() => [Adventure])
-  async addTrips(
-    @CurrentUser('uid') uid: string,
-    @Args('input') input: AdventureInput,
-  ): Promise<Adventure[]> {
-    return await this.tripService.save(uid, input);
+  @Mutation(() => Adventure)
+  @UseGuards(JwtAuthGuard)
+  async addAdventure(
+    @CurrentUser() user: AuthenticatedUser,
+    @Args('param') adventureInput: AdventureInput,
+  ): Promise<Adventure> {
+    return await this.adventureService.saveAdventure(user.id, adventureInput);
   }
 }
