@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, ID, InputType, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Location {
@@ -38,8 +38,20 @@ export class Trace {
 
 @ObjectType()
 export class Adventure {
+  @Field(() => ID, { name: 'id' })
+  _id?: string;
+
   @Field()
   uuid: string;
+
+  @Field()
+  title: string;
+
+  @Field()
+  description: string;
+
+  @Field()
+  altitude: number;
 
   @Field()
   calories: number;
@@ -60,7 +72,7 @@ export class Adventure {
   speed: number;
 
   @Field()
-  geometry: string;
+  polyline: string;
 
   @Field(() => [Trace])
   traces: Trace[];
@@ -114,6 +126,15 @@ export class AdventureInput {
   uuid: string;
 
   @Field()
+  title: string;
+
+  @Field()
+  description: string;
+
+  @Field()
+  altitude: number;
+
+  @Field()
   calories: number;
 
   @Field()
@@ -132,7 +153,10 @@ export class AdventureInput {
   speed: number;
 
   @Field()
-  geometry: string;
+  polyline: string;
+
+  @Field()
+  image: String;
 
   @Field(() => [TraceInput])
   traces: TraceInput[];

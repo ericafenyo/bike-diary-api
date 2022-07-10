@@ -41,6 +41,15 @@ export class Adventure extends Document {
   uuid: string;
 
   @Prop()
+  title: string;
+
+  @Prop()
+  description: string;
+
+  @Prop()
+  altitude: number;
+
+  @Prop()
   calories: number;
 
   @Prop()
@@ -59,7 +68,10 @@ export class Adventure extends Document {
   speed: number;
 
   @Prop()
-  geometry: string;
+  polyline: string;
+
+  @Prop()
+  image: String;
 
   @Prop()
   traces: Trace[];

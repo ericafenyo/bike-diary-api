@@ -10,9 +10,13 @@ export class AdventureService {
   constructor(
     @InjectModel(Adventure.name) private adventureModel: Model<Adventure>,
     private userService: UserService,
-  ) {}
+  ) { }
+  
+  async find(): Promise<Adventure[]> {
+    return await this.adventureModel.find();
+  }
 
-  async find(uuid: string): Promise<Adventure[]> {
+  async findById(uuid: string): Promise<Adventure[]> {
     const user = await this.userService.findById(uuid);
     const trips = await this.adventureModel.find({ user: user._id });
     return trips;
