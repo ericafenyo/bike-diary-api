@@ -1,4 +1,4 @@
-import { Field, ID, InputType, ObjectType } from '@nestjs/graphql';
+import { Field, GraphQLTimestamp, ID, InputType, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class Location {
@@ -11,7 +11,7 @@ export class Location {
   @Field()
   altitude: number;
 
-  @Field()
+  @Field(() => GraphQLTimestamp)
   time: number;
 
   @Field()
@@ -32,8 +32,8 @@ export class Trace {
   @Field()
   writeTime: Date;
 
-  @Field(() => [Location])
-  locations: Location[];
+  @Field(() => Location)
+  location: Location;
 }
 
 @ObjectType()
@@ -53,13 +53,13 @@ export class Adventure {
   @Field()
   altitude: number;
 
-  @Field()
+  @Field(() => Int)
   calories: number;
 
   @Field()
   distance: number;
 
-  @Field()
+  @Field(() => Int)
   duration: number;
 
   @Field()
@@ -95,7 +95,7 @@ export class LocationInput {
   @Field()
   altitude: number;
 
-  @Field()
+  @Field(() => GraphQLTimestamp)
   time: number;
 
   @Field()
@@ -116,8 +116,8 @@ export class TraceInput {
   @Field()
   writeTime: Date;
 
-  @Field(() => [LocationInput])
-  locations: LocationInput[];
+  @Field(() => LocationInput)
+  location: LocationInput;
 }
 
 @InputType()
@@ -134,13 +134,13 @@ export class AdventureInput {
   @Field()
   altitude: number;
 
-  @Field()
+  @Field(() => Int)
   calories: number;
 
   @Field()
   distance: number;
 
-  @Field()
+  @Field(() => Int)
   duration: number;
 
   @Field()
