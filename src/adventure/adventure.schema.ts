@@ -32,12 +32,12 @@ export class Trace {
   writeTime: Date;
 
   @Prop()
-  location: Location;
+  locations: Location[];
 }
 
 @Schema()
 export class Adventure extends Document {
-  @Prop({ unique: true })
+  @Prop()
   uuid: string;
 
   @Prop()

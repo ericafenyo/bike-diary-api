@@ -11,7 +11,7 @@ export class AdventureService {
     @InjectModel(Adventure.name) private adventureModel: Model<Adventure>,
     private userService: UserService,
   ) { }
-
+  
   async find(): Promise<Adventure[]> {
     return await this.adventureModel.find();
   }
@@ -22,12 +22,8 @@ export class AdventureService {
     return trips;
   }
 
-  async addAdventures(id: string, inputs: AdventureInput[]): Promise<Adventure[]> {
+  async saveAdventure(id: string, input: AdventureInput): Promise<Adventure> {
     const user = await this.userService.findById(id);
-    const documents = inputs.map(input => {
-      return { ...input }
-    });
-
-    return await this.adventureModel.create(documents)
+    return await new this.adventureModel({ ...input, userId: user._id }).save();
   }
 }
