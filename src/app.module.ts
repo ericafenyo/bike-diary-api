@@ -10,6 +10,7 @@ import { CredentialModule } from './credential/credential.module';
 import { MailModule } from './mail/mail.module';
 import { OtpModule } from './otp/otp.module';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { UploadModule } from './upload/upload.module';
 require('dotenv').config();
 
 @Module({
@@ -27,6 +28,7 @@ require('dotenv').config();
     CredentialModule,
     MailModule,
     OtpModule,
+    UploadModule,
   ],
   controllers: [AppController],
 })
