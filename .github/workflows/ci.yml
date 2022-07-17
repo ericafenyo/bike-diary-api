@@ -22,18 +22,18 @@ jobs:
               npm install
               npm run build
         
-      - name: Publish updates
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT }}
-          key: ${{ secrets.KEY }}
-          script: |
-            cd projects/bike-diary-api
-            git pull origin main
-            npm install
-            npm run build
+    #  - name: Publish updates
+    #    uses: appleboy/ssh-action@master
+    #    with:
+    #      host: ${{ secrets.HOST }}
+    #      username: ${{ secrets.USERNAME }}
+    #      port: ${{ secrets.PORT }}
+    #      key: ${{ secrets.KEY }}
+    #      script: |
+    #        cd projects/bike-diary-api
+    #       git pull origin main
+    #        npm install
+    #         npm run build
             
       
       
