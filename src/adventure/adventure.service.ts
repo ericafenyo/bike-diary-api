@@ -16,10 +16,8 @@ export class AdventureService {
     return await this.adventureModel.find();
   }
 
-  async findById(uuid: string): Promise<Adventure[]> {
-    const user = await this.userService.findById(uuid);
-    const trips = await this.adventureModel.find({ user: user._id });
-    return trips;
+  async findById(id: string): Promise<Adventure> {
+    return await this.adventureModel.findOne({ id });
   }
 
   async addAdventures(id: string, inputs: AdventureInput[]): Promise<Adventure[]> {
