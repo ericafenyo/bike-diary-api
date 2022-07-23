@@ -14,6 +14,11 @@ export class AdventureResolver {
     return await this.service.find();
   }
 
+  @Query(() => Adventure)
+  async adventure(@Args('id') adventureId: string): Promise<Adventure> {
+    return await this.service.findById(adventureId);
+  }
+
   @Mutation(() => [Adventure])
   @UseGuards(JwtAuthGuard)
   async addAdventures(

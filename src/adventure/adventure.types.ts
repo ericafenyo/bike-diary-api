@@ -78,6 +78,9 @@ export class Adventure {
   traces: Trace[];
 
   @Field()
+  image: String;
+
+  @Field()
   createdAt: Date;
 
   @Field()
