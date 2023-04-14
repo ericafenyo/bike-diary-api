@@ -1,30 +1,17 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  UpdateDateColumn,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
-import { User } from "src/user/user.entity";
-                                                                                                                                                             
+import { User } from "../user/user.entity";
+import { CreatedUpdatedDates } from "../core/entity";
+
 @Entity()
-export class Credential {
+export class Credential extends CreatedUpdatedDates {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   password: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
-
   @OneToOne(() => User)
-  @JoinColumn()
-  user: string;
+  @JoinColumn({ name: "user_id" })
+  user: User;
 }

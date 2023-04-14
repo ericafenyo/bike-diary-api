@@ -1,7 +1,9 @@
-import { Column, CreateDateColumn, Entity, Generated, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, Entity, Generated, PrimaryGeneratedColumn } from "typeorm";
+
+import { CreatedUpdatedDates } from "../core/entity";
 
 @Entity()
-export class User {
+export class User extends CreatedUpdatedDates {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -12,18 +14,30 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ default: "" })
   username: string;
 
   @Column()
   gender: string;
 
-  @Column()
-  avatar: string;
+  @Column({ name: "avatar_path", default: "" })
+  avatarPath: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
+  @Column({ default: false })
+  activated: boolean;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @Column({ name: "activation_code", nullable: true })
+  activationCode: string;
+
+  @Column({ name: "activated_at", nullable: true })
+  activatedAt: Date;
+
+  @Column({ name: "password_reset_code", nullable: true })
+  passwordResetCode: string;
+
+  @Column({ name: "last_login", nullable: true })
+  lastLogin: Date;
+
+  @Column({ name: "current_login", nullable: true })
+  currentLogin: Date;
 }
