@@ -1,15 +1,14 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from 'src/user/user.module';
-import { AdventureResolver } from './adventure.resolver';
-import { Adventure, AdventureSchema } from './adventure.schema';
-import { AdventureService } from './adventure.service';
+import { Module } from "@nestjs/common";
+import { UserModule } from "src/user/user.module";
+import { AdventureResolver } from "./adventure.resolver";
+
+import { AdventureService } from "./adventure.service";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Adventure } from "./adventure.entity";
+import { Location } from "./location.entity";
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([{ name: Adventure.name, schema: AdventureSchema }]),
-    UserModule
-  ],
+  imports: [UserModule, TypeOrmModule.forFeature([Adventure, Location])],
   providers: [AdventureService, AdventureResolver],
 })
 export class AdventureModule {}

@@ -4,33 +4,26 @@ import {
   NotFoundException,
   BadRequestException,
 } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
-import { isEmail } from "class-validator";
 import { errors } from "../errors";
-import { User } from "./user.schema";
-import { User as UserEntity } from "./user.entity";
+import { User } from "./user.entity";
 import { CredentialService } from "../credential/credential.service";
 import { MailService } from "../mail/mail.service";
-import { OtpService } from "src/otp/otp.service";
-import speakeasy = require("speakeasy");
-import { CreateUserInput } from "./user.types";
-import { v4 as uuid } from "uuid";
+import { CreateUserInput, Gender } from "./user.types";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { EmailAddressManager } from "src/util/email-address-manager";
+import { UserIdentity } from "src/auth/auth.types";
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User.name) private userModel: Model<User>,
-    @InjectRepository(UserEntity) private userEntity: Repository<UserEntity>,
+    @InjectRepository(User) private repository: Repository<User>,
     private readonly credentialService: CredentialService,
-    private readonly optService: OtpService,
     private readonly mailService: MailService,
   ) {}
 
   async findById(id: string, validate: boolean = true): Promise<User> {
-    const user = await this.userModel.findOne({ id });
+    const user = await this.repository.findOneBy({ uuid: id });
 
     if (validate) {
       if (!user) {
@@ -48,7 +41,7 @@ export class UserService {
    * @param validate if true, throw error if the user does not exist
    */
   async findByEmail(email: string, validate = true): Promise<User> {
-    const user = await this.userModel.findOne({ email });
+    const user = await this.repository.findOneBy({ email });
     if (validate && !user) {
       throw new NotFoundException(errors.user.accountNotFound);
     }
@@ -58,23 +51,39 @@ export class UserService {
   /**
    * Add a user to the database.
    *
-   * @param user an object containing the user's information
+   * @param args an object containing the user's information
    */
-  async createUser(user: CreateUserInput): Promise<User> {
+  async createUser(args: CreateUserInput): Promise<User> {
+    const emailManager = EmailAddressManager.getInstance(args.email);
+
     // Checks if th email address is valid
-    if (!isEmail(user.email)) {
+    if (!emailManager.hasValidEmail()) {
       throw new BadRequestException(errors.validation.invalidEmail);
     }
 
-    // Find a user with the same email
-    const currentUser = await this.findByEmail(user.email, false);
-
     // Throw error if the user already exists
-    if (currentUser) {
+    const userExists = await this.getExistsByEmail(args.email);
+    if (userExists) {
       throw new ConflictException(errors.user.alreadyCreated);
     }
 
-    new this.userEntity.create({})
+    const maxRowId = await this.repository.maximum("id");
+
+    const username = emailManager.getUsername() + (maxRowId + 1);
+
+    // Create a new user entity
+    const entity = this.repository.create();
+    entity.email = args.email;
+    entity.username = username;
+
+    const user: any = await this.repository.save(entity);
+
+    // Save the user credentials
+    await this.credentialService.save(args.email, args.password);
+
+    user.user = "";
+
+    return user;
 
     // Check if the user has an any opt verification
     // const currentOpt = await this.optService.findByEmail(email);
@@ -100,22 +109,41 @@ export class UserService {
     //   token: token,
     // });
 
-    // console.log(secret);
-
     // Save and return the user information
 
-    const userinfo = new this.userModel();
+    // const userinfo = new this.repository.create();
 
     // const savedUser = await this.userModel.create({ ...user, uuid: uuid() });
     // await this.credentialService.save(savedUser.id, user.password);
     // return savedUser;
 
-    return userinfo;
+    // return userinfo;
   }
 
-  async validate(email: string, password: string): Promise<User | null> {
+  /**
+   * Find a user using the provided {@link email}
+   *
+   * @param email the user's email address
+   * @param validate if true, throw error if the user does not exist
+   */
+  private async getExistsByEmail(email: string): Promise<boolean> {
+    return await this.repository.exist({ where: { email } });
+  }
+
+  /**
+   * Returns a user from the database.
+   *
+   * @param args the users information
+   */
+  async getUser(args: UserIdentity): Promise<User> {
+    return await this.findByEmail(args.email);
+  }
+
+  async validate(email: string, password: string): Promise<UserIdentity | null> {
     const user = await this.findByEmail(email);
-    const isValid = await this.credentialService.validate(user._id, password);
-    return isValid ? user : null;
+
+    const isValid = await this.credentialService.validate(user, password);
+
+    return isValid ? { id: user.uuid, email: email } : null;
   }
 }

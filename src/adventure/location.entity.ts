@@ -3,12 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
 import { Adventure } from "./adventure.entity";
+import { Speed } from "./adventure.types";
 
 @Entity()
 export class Location {
@@ -19,33 +21,34 @@ export class Location {
   @Column({ unique: true })
   uuid: string;
 
-  @Column()
+  @Column({ type: "double precision" })
   latitude: number;
 
-  @Column()
+  @Column({ type: "double precision" })
   longitude: number;
 
-  @Column()
+  @Column({ type: "double precision" })
   altitude: number;
 
-  @Column()
+  @Column({ type: "timestamp" })
   time: number;
 
-  @Column()
-  speed: number;
+  @Column({ type: "simple-json" })
+  speed: Speed;
 
-  @Column()
+  @Column({ type: "real" })
   accuracy: number;
 
-  @Column()
+  @Column({ type: "real" })
   bearing: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
   @ManyToOne(() => Adventure, adventure => adventure.locations)
+  @JoinColumn({ name: "adventure_id" })
   adventure: Adventure;
 }

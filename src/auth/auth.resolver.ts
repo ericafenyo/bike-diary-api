@@ -25,7 +25,7 @@ export class AuthResolver {
    * @param {AuthenticatedUser} user an {@link AuthenticatedUser} object
    */
   @UseGuards(new LocalAuthGuard())
-  @Mutation(() => JWTokensType, { name: 'tokens' })
+  @Mutation(() => JWTokensType, { name: 'login' })
   async authenticateUser(
     @Args('email') email: string,
     @Args('password') password: string,

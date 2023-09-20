@@ -1,9 +1,9 @@
-import { Column, Entity, Generated, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, Generated, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-import { CreatedUpdatedDates } from "../core/entity";
+import { Gender } from "./user.types";
 
 @Entity()
-export class User extends CreatedUpdatedDates {
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -17,7 +17,7 @@ export class User extends CreatedUpdatedDates {
   @Column({ default: "" })
   username: string;
 
-  @Column()
+  @Column({ enum: [Gender.MALE, Gender.FEMALE, Gender.UNSPECIFIED], default: Gender.UNSPECIFIED })
   gender: string;
 
   @Column({ name: "avatar_path", default: "" })
@@ -40,4 +40,10 @@ export class User extends CreatedUpdatedDates {
 
   @Column({ name: "current_login", nullable: true })
   currentLogin: Date;
+
+  @CreateDateColumn({ name: "created_at" })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: "updated_at" })
+  updatedAt: Date;
 }

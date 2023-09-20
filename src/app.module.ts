@@ -12,6 +12,7 @@ import { AuthModule } from "./auth/auth.module";
 import { OtpModule } from "./otp/otp.module";
 import { UploadModule } from "./upload/upload.module";
 import { MailModule } from "./mail/mail.module";
+import { PhotoModule } from './photo/photo.module';
 
 require("dotenv").config();
 
@@ -41,6 +42,7 @@ require("dotenv").config();
     MailModule,
     OtpModule,
     UploadModule,
+    PhotoModule,
   ],
   controllers: [AppController],
 })
