@@ -46,8 +46,6 @@ export class MailService {
       subject: subject,
       html: mail,
     });
-
-    console.log(sentMessage);
   }
 
   private async getMail(template: string, context: object, locale: string) {
@@ -68,7 +66,7 @@ export class MailService {
         );
       })
       .catch(error => {
-        console.log('An error occurred while reading mail templates', error);
+        console.error('An error occurred while reading mail templates', error);
       });
   }
 
